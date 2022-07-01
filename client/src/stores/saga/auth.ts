@@ -7,10 +7,12 @@ import { ActionTypes } from "../constants";
 function* handleLogin(value:IPayloadAuth) {
   try {
     
-      const {data} =!value.payload.username? yield call(
+      const {data} =!value.payload.username? 
+      yield call(
         login,
         value.payload
-      ):yield call(
+      )
+      :yield call(
         signup,
         value.payload
       );
