@@ -1,14 +1,14 @@
+import React from 'react';
 
-import React from "react";
-
-import AuthorizedRoutes from "./AuthorizedRoutes";
-import NonAuthorizedRoutes from "./NonAuthorizedRoutes";
+import AuthorizedRoutes from './AuthorizedRoutes';
+import NonAuthorizedRoutes from './NonAuthorizedRoutes';
 
 const Routes: React.FC = () => {
+  const isAuthenticate = false;
   return (
     <>
       <NonAuthorizedRoutes />
-      <AuthorizedRoutes isAuthenticated />
+      <AuthorizedRoutes isAuthenticated={isAuthenticate} />
     </>
   );
 };
