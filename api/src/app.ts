@@ -1,8 +1,8 @@
 import express from "express";
 import config from 'config'
 import morgan from "morgan";
-import path from "path";
 import route from './routes'
+import cors from 'cors';
 
 // env
 const port = config.get("serverConfig.port" );
@@ -15,6 +15,7 @@ app.use(express.urlencoded({
    extended:true
 }));
 app.use(express.json());
+app.use(cors())
 
 //HTTP logger
 app.use(morgan("combined"));
