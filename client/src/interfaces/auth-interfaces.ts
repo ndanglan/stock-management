@@ -4,3 +4,9 @@ export interface IAuth{
   email:string,
   confirmPassword?:string
 }
+
+export interface IAuthAction{
+  username:string,
+  email:string,
+  accessToken:string
+}

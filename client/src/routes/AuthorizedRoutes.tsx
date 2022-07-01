@@ -1,22 +1,28 @@
-import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import Home from 'pages/home/Home';
-
+const Home = React.lazy(() => import('pages/home/Home'));
 interface IProps {
   isAuthenticated: boolean;
 }
 
-const AuthorizedRoutes: React.FC<IProps> = ({ isAuthenticated = false }) => {
-  if (!isAuthenticated) {
-    console.log(isAuthenticated);
-    return <Navigate to="/login" />;
-  }
+const AuthorizedRoutes = ({ isAuthenticated = false }) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-    </Routes>
+    <>
+      {isAuthenticated && (
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      )}
+    </>
   );
 };
 

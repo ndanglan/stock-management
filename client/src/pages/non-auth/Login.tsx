@@ -3,10 +3,12 @@ import { AuthMode } from 'utilities/enum-utils';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Validate from './validate/validate';
 import { IAuth } from 'interfaces/auth-interfaces';
-import { login, signup } from '../../api/services/auth';
+import { useDispatch } from 'react-redux';
+import { loginAction, registerAction } from '../../stores/actions';
 
 const LoginPage = () => {
   const [authMode, setAuthMode] = useState(AuthMode.LOGIN);
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -27,11 +29,11 @@ const LoginPage = () => {
 
   const onSubmit: SubmitHandler<IAuth> = async (data) => {
     if (isLoginMode) {
-      const response = await login(data);
-      console.log('login', response);
+      // const response = await login(data);
+      // console.log('login', response);
+      dispatch(loginAction(data));
     } else {
-      const response = await signup(data);
-      console.log('signup', response);
+      dispatch(registerAction(data));
     }
   };
 

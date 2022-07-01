@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import Routes from 'routes/Routes';
 import { screenResize } from './stores/actions';
 
-const App: React.FC = () => {
+const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const handleResize = () => {

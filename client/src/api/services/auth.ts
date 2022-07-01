@@ -2,7 +2,9 @@ import { IAuth } from 'interfaces/auth-interfaces';
 import API from '../axios';
 
 const login = (payload:IAuth)=>{
-  return API.post(`/auth/login`,payload).then((response)=>({data:response.data,status:response.status})).catch(error=>error);
+  return API.post(`/auth/login`,payload).then((response)=>{
+    return response
+  }).catch(error=>error.response);
 }
 
 const signup = (payload:IAuth)=>{

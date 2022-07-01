@@ -1,3 +1,3 @@
 import { screenResize } from "./uiAction";
-
-export { screenResize };
+import { loginAction, registerAction } from "./authActions";
+export { screenResize,loginAction,registerAction };

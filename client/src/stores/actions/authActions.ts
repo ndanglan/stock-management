@@ -1,22 +1,22 @@
+import { IAuth } from './../../interfaces/auth-interfaces';
 import { ActionTypes } from "../constants";
 
-const initialState: { screenWidth: number | null } = {
-  screenWidth: typeof window === "object" ? window.innerWidth : null,
+export interface IPayloadAuth{
+  type:string,
+  payload:any
+}
+
+export const loginAction = (payload: IAuth) => {
+  console.log('@@loginAction',payload)
+  return <IPayloadAuth>{
+    type: ActionTypes.API_REQUESTING,
+    payload,
+  } ;
 };
 
-const uiReducer = (
-  state = initialState,
-  action: { type: string; payload: number }
-) => {
-  switch (action.type) {
-    case ActionTypes.SCREEN_RESIZE:
-      return {
-        ...state,
-        screenWidth: action.payload,
-      };
-    default:
-      return state;
-  }
+export const registerAction = (payload:IAuth) => {
+  return <IPayloadAuth>{
+    type: ActionTypes.API_REQUESTING,
+    payload,
+  };
 };
-
-export default uiReducer;

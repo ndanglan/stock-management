@@ -1,8 +1,10 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginPage from 'pages/non-auth/Login';
-
-const NonAuthorizedRoutes: React.FC = () => {
+interface IProps {
+  isAuthenticated: boolean;
+}
+const NonAuthorizedRoutes = ({ isAuthenticated = true }) => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />

@@ -1,22 +1,31 @@
+import { IAuthAction } from "../../interfaces/auth-interfaces";
 import { ActionTypes } from "../constants";
 
-const initialState: { screenWidth: number | null } = {
-  screenWidth: typeof window === "object" ? window.innerWidth : null,
+const initialState:any = {
+  userProfile:null,
+  message:'',
+  status:null
 };
 
-const uiReducer = (
+const authReducer = (
   state = initialState,
-  action: { type: string; payload: number }
+  action: { type: string; payload: any }
 ) => {
   switch (action.type) {
-    case ActionTypes.SCREEN_RESIZE:
+    case ActionTypes.LOGIN_ACTION:
       return {
-        ...state,
-        screenWidth: action.payload,
+        userProfile:action.payload.data,
+        message:action.payload.message,
+  status:action.payload.status
+      };
+      case ActionTypes.API_FAILED:
+      return {
+        message:action.payload.message,
+  status:action.payload.status
       };
     default:
       return state;
   }
 };
 
-export default uiReducer;
+export default authReducer;
