@@ -1,7 +1,11 @@
-import { combineReducers } from "redux";
-import authReducer from "./authReducer";
+import { combineReducers } from 'redux';
+import authReducer, { AuthState } from './authReducer';
 
-import uiReducer from "./uiReducer";
+import uiReducer, { screenState } from './uiReducer';
+export interface AppState {
+  screen: screenState;
+  auth: AuthState;
+}
 
 const rootReducer = combineReducers({
   screen: uiReducer,

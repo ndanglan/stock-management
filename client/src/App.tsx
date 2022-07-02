@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+
 import Routes from 'routes/Routes';
 import { screenResize } from './stores/actions';
 
@@ -15,10 +17,24 @@ const App = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [dispatch]);
+
   return (
-    <div className="container vw-100">
-      <Routes />
-    </div>
+    <>
+      <div className="container vw-100">
+        <ToastContainer
+          position="top-right"
+          autoClose={1000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <Routes />
+      </div>
+    </>
   );
 };
 

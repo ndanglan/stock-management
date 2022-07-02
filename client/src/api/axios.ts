@@ -1,9 +1,9 @@
-import axios from "axios";
-import { CONSTANTS } from "utilities/constants";
+import axios from 'axios';
+import { CONSTANTS } from 'utilities/constants';
 
 export default axios.create({
   baseURL: CONSTANTS.BASEAPI,
   headers: {
-    "Content-type": "application/json"
-  }
+    'Content-type': 'application/json',
+  },
 });

@@ -1,4 +1,4 @@
-export enum AuthMode{
-  LOGIN="LOGIN",
-  SIGNUP='SIGNUP'
+export enum AuthMode {
+  LOGIN = 'LOGIN',
+  SIGNUP = 'SIGNUP',
 }
