@@ -2,7 +2,7 @@ export interface IAuth {
   username?: string;
   password: string;
   email: string;
-  confirmPassword?: string;
+  confirmpassword?: string;
 }
 
 export interface IAuthAction {

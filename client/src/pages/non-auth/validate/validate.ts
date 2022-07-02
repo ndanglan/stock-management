@@ -29,7 +29,7 @@ class Validate {
     },
   };
 
-  static confirmPassword = {
+  static confirmpassword = {
     required: (e: string | undefined) => {
       if (e) {
         return true;

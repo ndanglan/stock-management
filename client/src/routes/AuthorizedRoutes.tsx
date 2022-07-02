@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import MainLayout from '../common-components/layout/MainLayout';
 
 const Home = React.lazy(() => import('pages/home/Home'));
 interface IProps {
@@ -18,9 +19,11 @@ const AuthorizedRoutes = ({ isAuthenticated = false }) => {
   return (
     <>
       {isAuthenticated && (
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </MainLayout>
       )}
     </>
   );

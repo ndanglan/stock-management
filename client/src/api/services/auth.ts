@@ -20,7 +20,7 @@ const signup = (payload: IAuth) => {
     email: payload.email,
     password: payload.password,
     username: payload.username,
-    confirmpassword: payload.confirmPassword,
+    confirmpassword: payload.confirmpassword,
   };
   return API.post(`/auth/signup`, newPayload)
     .then((response) => {
