@@ -4,7 +4,10 @@
   "description": "stock_management",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "nodemon --inspect --config nodemon.json src/app.ts"
+    "dev": "nodemon --inspect --config nodemon.json src/app.ts",
+    "add":"ts-node src/db/create.ts",
+    "update":"ts-node src/db/update.ts",
+    "delete":"ts-node src/db/delete.ts"
   },
   "repository": {
     "type": "git",

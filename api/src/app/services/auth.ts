@@ -1,3 +1,4 @@
+import { AuthError } from './../../utils/enum_utils';
 import { StatusCodes } from 'http-status-codes';
 import { IAuthRegister, IAuthLogin } from './../../interfaces/interface_auth';
 import { PrismaClient } from '@prisma/client';
@@ -28,7 +29,7 @@ class AuthService {
 
       return null;
     } catch (error) {
-      if (error.meta.target === 'user_email_key') {
+      if (error.meta.target === AuthError.EMAIL) {
         return {
           statusCode: StatusCodes.CONFLICT,
           message: 'Email is existed',

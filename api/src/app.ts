@@ -1,10 +1,10 @@
 import express from 'express';
 import config from 'config';
 import morgan from 'morgan';
-import { authRouter } from './routes';
+import { authRouter, orderRouter, productRouter } from './routes';
 import cors from 'cors';
 import errorHandlerMiddleware from './middleware/error-handler';
-import { notFound } from './middleware';
+import { notFound, authMiddleware } from './middleware';
 
 // env
 const port = config.get('serverConfig.port');
@@ -29,7 +29,9 @@ app.get('/', (req, res) => {
   res.send('<h1>Stock management api</h1>');
 });
 
-app.use(`${baseUri}/auth`, authRouter);
+app.use(`${baseUri}/auth`, authMiddleware, authRouter);
+app.use(`${baseUri}/products`, authMiddleware, productRouter);
+app.use(`${baseUri}/orders`, authMiddleware, orderRouter);
 
 app.use(errorHandlerMiddleware);
 app.use(notFound);

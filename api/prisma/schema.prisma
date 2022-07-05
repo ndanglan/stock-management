@@ -10,9 +10,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProductStatus {
+  REJECT
+  ACCEPT
+}
+
 model user {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   username String
   password String
+  products product[] @relation("products")
+}
+
+model product {
+  id         Int                    @id @default(autoincrement())
+  author     user                   @relation("products", fields: [authorId], references: [id])
+  authorId   Int
+  code       String                 @unique
+  amount     Int
+  createdAt  DateTime               @default(now())
+  type       String
+  status     ProductStatus          @default(ACCEPT)
+  categories CategoriesOnProducts[]
+  orders     OrdersOnProducts[]
+}
+
+model CategoriesOnProducts {
+  id         Int      @id @default(autoincrement())
+  product    product? @relation(fields: [productId], references: [id])
+  productId  Int?
+  category   category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+}
+
+model category {
+  id       Int                    @id @default(autoincrement())
+  name     String                 @unique
+  products CategoriesOnProducts[]
+}
+
+model OrdersOnProducts {
+  id        Int      @id @default(autoincrement())
+  product   product? @relation(fields: [productId], references: [id])
+  productId Int?
+  order     order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+}
+
+model order {
+  id       Int                @id @default(autoincrement())
+  products OrdersOnProducts[]
+  total    Float
+  amount   Int
 }

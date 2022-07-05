@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `product` MODIFY `status` ENUM('REJECT', 'ACCEPT') NOT NULL DEFAULT 'ACCEPT';

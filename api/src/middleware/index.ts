@@ -1,5 +1,5 @@
 import errorHandlerMiddleware from './error-handler';
 import notFound from './not-found';
-// import auth from './auth';
+import authMiddleware from './auth';
 
-export { errorHandlerMiddleware, notFound };
+export { errorHandlerMiddleware, notFound, authMiddleware };
