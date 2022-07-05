@@ -1,10 +1,8 @@
 import React from 'react';
 import { Button, Grid, Paper, Stack, TextField, Typography } from '@mui/material';
-import { IAuth } from '../../../interfaces/auth-interfaces';
 import { AuthMode } from '../../../utilities/enum-utils';
 import { SubmitHandler, useFormContext } from 'react-hook-form';
-import Validate from '../validate/validate';
-
+import Validate from '../../../utilities/validate/validate';
 interface IForm {
   onSwitchMode: (mode: AuthMode) => void;
   isLoginMode: boolean;
@@ -65,8 +63,9 @@ const Form = (props: IForm) => {
           sx={{
             fontWeight: '700',
           }}
+          color="primary"
         >
-          Login
+          {isLoginMode ? 'Login' : 'Sign up'}
         </Typography>
         <Grid justifyContent={'center'} textAlign="center" alignItems="center" item>
           <TextField
@@ -132,7 +131,7 @@ const Form = (props: IForm) => {
           </Grid>
         )}
         <Grid justifyContent={'center'} textAlign="center" alignItems="center" item>
-          <Button onClick={handleSubmit(onSubmit)} variant="contained">
+          <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
             {isLoginMode ? 'Login' : 'Signup'}
           </Button>
         </Grid>

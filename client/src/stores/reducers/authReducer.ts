@@ -14,17 +14,23 @@ const initialState: AuthState = {
 
 const authReducer = (state = initialState, action: { type: string; payload: any }) => {
   switch (action.type) {
-    case ActionTypes.LOGIN_ACTION:
+    case ActionTypes.AUTH_SUCCESS:
       return {
         ...state,
-        userProfile: action.payload.data,
+        userProfile: { ...action.payload.data },
         message: action.payload.message,
         status: action.payload.status,
       };
     case ActionTypes.API_FAILED:
       return {
         message: action.payload.message,
-        status: action.payload.status,
+        status: action.payload.statusCode || false,
+      };
+    case ActionTypes.AUTH_LOGOUT:
+      return {
+        userProfile: null,
+        message: '',
+        status: null,
       };
     default:
       return state;

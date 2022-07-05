@@ -4,18 +4,19 @@ import { ActionTypes } from '../constants';
 export interface IPayloadAuth {
   type: string;
   payload: any;
+  callback?: any;
 }
 
-export const loginAction = (payload: IAuth) => {
+export const authAction = (payload: IAuth, callback: any) => {
   return <IPayloadAuth>{
-    type: ActionTypes.API_REQUESTING,
+    type: ActionTypes.AUTH_REQUESTING,
     payload,
+    callback,
   };
 };
 
-export const registerAction = (payload: IAuth) => {
-  return <IPayloadAuth>{
-    type: ActionTypes.API_REQUESTING,
-    payload,
+export const logOutAction = () => {
+  return {
+    type: ActionTypes.AUTH_LOGOUT,
   };
 };

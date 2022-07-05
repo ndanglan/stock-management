@@ -14,7 +14,7 @@ const AuthorizedRoutes = ({ isAuthenticated = false }) => {
     if (!isAuthenticated) {
       navigate('/login');
     }
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <>

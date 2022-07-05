@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { AuthMode } from 'utilities/enum-utils';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { IAuth } from 'interfaces/auth-interfaces';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginAction, registerAction } from '../../stores/actions';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { AppState } from '../../stores/reducers';
+import { useDispatch } from 'react-redux';
+import { authAction } from '../../stores/actions';
 import Form from './form/Form';
+import PureLayout from '../../common-components/layout/PureLayout';
+import { useSnackbar } from 'notistack';
 
 const LoginPage = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [authMode, setAuthMode] = useState(AuthMode.LOGIN);
   const dispatch = useDispatch();
   const methods = useForm<IAuth>({
@@ -31,21 +31,18 @@ const LoginPage = () => {
       username: methods.watch('username'),
       confirmpassword: methods.watch('confirmpassword'),
     };
-    if (isLoginMode) {
-      dispatch(loginAction(data));
-      methods.clearErrors();
-      methods.reset();
-    } else {
-      dispatch(registerAction(data));
-      methods.clearErrors();
-      methods.reset();
-    }
+
+    dispatch(authAction(data, enqueueSnackbar));
+    methods.clearErrors();
+    methods.reset();
   };
 
   return (
-    <FormProvider {...methods}>
-      <Form onSwitchMode={(mode: AuthMode) => onSwitchMode(mode)} isLoginMode={isLoginMode} onSubmit={onSubmit} />
-    </FormProvider>
+    <PureLayout>
+      <FormProvider {...methods}>
+        <Form onSwitchMode={(mode: AuthMode) => onSwitchMode(mode)} isLoginMode={isLoginMode} onSubmit={onSubmit} />
+      </FormProvider>
+    </PureLayout>
   );
 };
 
