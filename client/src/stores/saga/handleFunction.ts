@@ -8,50 +8,55 @@ export function* handleData(action: any) {
   const generalType = type.slice(0, type.lastIndexOf('_'));
   const succesType = ActionTypes[`${generalType}_SUCCESS`];
   const failedType = ActionTypes[`${generalType}_FAILED`];
-
-  if (!payload.message) {
+  if (!payload?.message) {
     if (payload.status === StatusCodes.CREATED || payload.status === StatusCodes.OK) {
-      action.callback(payload.data.message, {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      if (action?.callback) {
+        action?.callback(payload?.data?.message || 'Success', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
 
       yield put({
         type: succesType,
         payload: {
-          ...payload.data,
+          ...payload?.data,
         },
       });
     } else {
-      action.callback(payload.data.message, {
+      if (action?.callback) {
+        action?.callback(payload?.data?.message || payload?.message, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
+      yield put({
+        type: failedType,
+        payload: {
+          ...payload?.data,
+        },
+      });
+    }
+  } else {
+    if (action?.callback) {
+      action?.callback(payload?.data?.message || payload?.message, {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
         },
       });
-      yield put({
-        type: failedType,
-        payload: {
-          ...payload.data,
-        },
-      });
     }
-  } else {
-    action.callback(payload.data.message, {
-      variant: 'error',
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
     yield put({
       type: failedType,
       payload: {
-        ...payload.message,
+        ...payload?.message,
       },
     });
   }

@@ -4,7 +4,6 @@ import API from '../axios';
 const login = (payload: IAuth) => {
   return API.post(`/auth/login`, payload)
     .then((response) => {
-      console.log(response);
       return { data: response, status: response.status };
     })
     .catch((error) => {

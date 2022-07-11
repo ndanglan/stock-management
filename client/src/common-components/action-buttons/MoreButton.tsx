@@ -1,5 +1,5 @@
-import React from 'react';
-import { IconButton, Menu } from '@mui/material';
+import React, { useEffect } from 'react';
+import { IconButton, Menu, Popover } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface IMoreButton {
@@ -7,23 +7,34 @@ interface IMoreButton {
 }
 
 const MoreButton = (props: IMoreButton) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const id = open ? 'simple-popover' : undefined;
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClick} aria-describedby={id}>
         <MoreVertIcon />
       </IconButton>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        {props.menuItems}
-      </Menu>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+      >
+        <Menu open={open} anchorEl={anchorEl} onClick={handleClose}>
+          {props.menuItems}
+        </Menu>
+      </Popover>
     </>
   );
 };

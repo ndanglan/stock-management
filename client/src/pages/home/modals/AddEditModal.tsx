@@ -6,12 +6,19 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Skeleton,
+  Stack,
   TextField,
 } from '@mui/material';
 import { ViewMode } from '../../../utilities/enum-utils';
 import { PrimaryButton, SecondaryButton } from '../../../common-components/action-buttons/Buttons';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import CloseIcon from '@mui/icons-material/Close';
+import DatePickerInput from '../../../common-components/date-picker/DatePickerInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSingleProductAction } from '../../../stores/actions';
+import { AppState } from '../../../stores/reducers';
+import moment from 'moment';
 
 interface IAddEditModal {
   isOpen: boolean;
@@ -19,24 +26,29 @@ interface IAddEditModal {
   handleClose: () => void;
   onSave: SubmitHandler<any>;
   onReturn?: SubmitHandler<any>;
+  selectedId?: number | string;
 }
 
 const AddEditModal = (props: IAddEditModal) => {
   const { isOpen, mode = ViewMode.ADD, handleClose, onSave, onReturn } = props;
-  const {
-    register,
-    formState: { errors, isValid },
-    handleSubmit,
-  } = useForm({
-    reValidateMode: 'onChange',
+  const dispatch = useDispatch();
+  const { selectedSingle, isActionLoading } = useSelector((state: AppState) => state.configTable.products);
+  const methods = useForm({
+    defaultValues: {
+      toDateString: new Date(),
+      passCode: '',
+      type: '',
+      amount: null,
+    },
   });
+
   const renderTilteAndSub = useCallback(() => {
     return mode === ViewMode.ADD
       ? { title: 'Thêm mặt hàng', subtitle: 'Kiểm hàng trước khi thêm, có thể trả hàng' }
       : { title: 'Sửa thông tin mặt hàng', subtitle: 'Sửa thông tin mặt hàng đã nhập vào kho' };
   }, [mode]);
+
   const renderButtonActions = () => {
-    const disable = !isValid;
     switch (mode) {
       case ViewMode.ADD:
         return (
@@ -45,18 +57,16 @@ const AddEditModal = (props: IAddEditModal) => {
               Hủy bỏ
             </SecondaryButton>
             <SecondaryButton
-              disable={disable}
               onClick={() => {
                 if (onReturn) {
-                  return handleSubmit(onReturn);
+                  console.log('Return');
+                  methods.handleSubmit(onReturn)();
                 }
               }}
             >
               Trả hàng
             </SecondaryButton>
-            <PrimaryButton disable={disable} onClick={handleSubmit(onSave)}>
-              Nhập hàng
-            </PrimaryButton>
+            <PrimaryButton onClick={methods.handleSubmit(onSave)}>Nhập hàng</PrimaryButton>
           </>
         );
       case ViewMode.EDIT:
@@ -65,9 +75,7 @@ const AddEditModal = (props: IAddEditModal) => {
             <SecondaryButton color="error" onClick={handleClose}>
               Hủy bỏ
             </SecondaryButton>
-            <PrimaryButton disable={disable} onClick={handleSubmit(onSave)}>
-              Cập nhật
-            </PrimaryButton>
+            <PrimaryButton onClick={methods.handleSubmit(onSave)}>Cập nhật</PrimaryButton>
           </>
         );
       default:
@@ -76,9 +84,19 @@ const AddEditModal = (props: IAddEditModal) => {
   };
 
   useEffect(() => {
-    if (mode === ViewMode.EDIT) {
+    if (mode === ViewMode.EDIT && props.selectedId) {
+      dispatch(getSingleProductAction(props.selectedId));
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedSingle && mode === ViewMode.EDIT) {
+      methods.setValue('passCode', selectedSingle.code);
+      methods.setValue('amount', selectedSingle.amount as any);
+      methods.setValue('type', selectedSingle.type);
+      methods.setValue('toDateString', moment(selectedSingle.createdAt).toDate());
+    }
+  }, [selectedSingle]);
 
   return (
     <Dialog open={isOpen} maxWidth={'sm'} onClose={handleClose} fullWidth>
@@ -99,65 +117,83 @@ const AddEditModal = (props: IAddEditModal) => {
           </IconButton>
         ) : null}
       </DialogTitle>
-      <DialogContent>
-        <DialogContentText>{renderTilteAndSub().subtitle}</DialogContentText>
-        <div>
-          <TextField
-            margin="dense"
-            label="Mã số"
-            type="text"
-            fullWidth
-            error={errors.passCode ? true : false}
-            helperText={<>{errors.passCode ? 'Trường này đang trống' : null}</>}
-            variant="standard"
-            {...register('passCode', {
-              required: true,
-            })}
-          />
-        </div>
-        <div>
-          <TextField
-            margin="dense"
-            label="Loại hàng"
-            type="text"
-            fullWidth
-            error={errors.type ? true : false}
-            helperText={<>{errors.type ? 'Trường này đang trống' : null}</>}
-            variant="standard"
-            {...register('type', {
-              required: true,
-            })}
-          />
-        </div>
-        <div>
-          <TextField
-            margin="dense"
-            label="Số lượng"
-            type="text"
-            fullWidth
-            error={errors.amount ? true : false}
-            helperText={<>{errors.amount ? 'Trường này đang trống' : null}</>}
-            variant="standard"
-            {...register('amount', {
-              required: true,
-            })}
-          />
-        </div>
-        <div>
-          <TextField
-            margin="dense"
-            label="Ngày tháng nhập"
-            type="email"
-            fullWidth
-            error={errors.importDate ? true : false}
-            helperText={<>{errors.importDate ? 'Trường này đang trống' : null}</>}
-            variant="standard"
-            {...register('importDate', {
-              required: true,
-            })}
-          />
-        </div>
-      </DialogContent>
+      {isActionLoading ? (
+        <Stack alignItems={'center'} spacing={2}>
+          <Skeleton animation="wave" variant="rectangular" width={400} height={30} />
+          <Skeleton animation="wave" variant="rectangular" width={400} height={30} />
+        </Stack>
+      ) : (
+        <>
+          <DialogContent>
+            <DialogContentText
+              sx={{
+                color: 'text.primary',
+              }}
+            >
+              {renderTilteAndSub().subtitle}
+            </DialogContentText>
+            <FormProvider {...methods}>
+              <div>
+                <TextField
+                  sx={{
+                    color: 'black',
+                  }}
+                  margin="dense"
+                  label="Mã số"
+                  type="text"
+                  fullWidth
+                  error={methods.formState.errors.passCode ? true : false}
+                  helperText={<>{methods.formState.errors.passCode ? 'Trường này đang trống' : null}</>}
+                  variant="standard"
+                  {...methods.register('passCode', {
+                    required: true,
+                  })}
+                />
+              </div>
+              <div>
+                <TextField
+                  sx={{
+                    color: 'black',
+                  }}
+                  margin="dense"
+                  label="Loại hàng"
+                  type="text"
+                  fullWidth
+                  error={methods.formState.errors.type ? true : false}
+                  helperText={<>{methods.formState.errors.type ? 'Trường này đang trống' : null}</>}
+                  variant="standard"
+                  {...methods.register('type', {
+                    required: true,
+                  })}
+                />
+              </div>
+              <div>
+                <TextField
+                  sx={{
+                    color: 'black',
+                  }}
+                  margin="dense"
+                  label="Số lượng"
+                  type="number"
+                  fullWidth
+                  inputProps={{
+                    inputMode: 'numeric',
+                  }}
+                  error={methods.formState.errors.amount ? true : false}
+                  helperText={<>{methods.formState.errors.amount ? 'Trường này đang trống' : null}</>}
+                  variant="standard"
+                  {...methods.register('amount', {
+                    required: true,
+                  })}
+                />
+              </div>
+              <div>
+                <DatePickerInput />
+              </div>
+            </FormProvider>
+          </DialogContent>
+        </>
+      )}
       <DialogActions>{renderButtonActions()}</DialogActions>
     </Dialog>
   );

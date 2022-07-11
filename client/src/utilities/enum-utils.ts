@@ -2,6 +2,7 @@ export enum AuthMode {
   LOGIN = 'LOGIN',
   SIGNUP = 'SIGNUP',
 }
+
 export enum ActionButtons {
   EDIT = 'EDIT',
   DELETE = 'DELETE',
@@ -10,4 +11,9 @@ export enum ActionButtons {
 export enum ViewMode {
   EDIT = 'EDIT',
   ADD = 'ADD',
+}
+
+export enum ProductStatus {
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
 }

@@ -1,9 +1,7 @@
-import { styled, TableCell, tableCellClasses, TableRow } from '@mui/material';
-import React from 'react';
+import { styled, TableCell, tableCellClasses, TableHead, TableRow, tableHeadClasses } from '@mui/material';
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary,
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -20,3 +18,9 @@ export const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
+
+// export const StyledTableHeader = styled(TableHead)(({ theme }) => ({
+//   [`&.${tableHeadClasses.root}`]: {
+//     backgroundColor: `${theme.palette.primary}`,
+//   },
+// }));

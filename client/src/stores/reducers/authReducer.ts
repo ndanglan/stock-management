@@ -21,7 +21,7 @@ const authReducer = (state = initialState, action: { type: string; payload: any 
         message: action.payload.message,
         status: action.payload.status,
       };
-    case ActionTypes.API_FAILED:
+    case ActionTypes.AUTH_FAILED:
       return {
         message: action.payload.message,
         status: action.payload.statusCode || false,

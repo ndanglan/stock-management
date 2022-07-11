@@ -1,32 +1,18 @@
-import React, { useEffect } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import MainLayout from '../common-components/layout/MainLayout';
 
-const Home = React.lazy(() => import('pages/home/Home'));
 interface IProps {
   isAuthenticated: boolean;
+  children: any;
 }
 
-const AuthorizedRoutes = ({ isAuthenticated = false }) => {
-  const navigate = useNavigate();
+const AuthorizedRoutes = ({ isAuthenticated = false, children }: IProps) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated]);
-
-  return (
-    <>
-      {isAuthenticated && (
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </MainLayout>
-      )}
-    </>
-  );
+  return <>{isAuthenticated && <MainLayout>{children}</MainLayout>}</>;
 };
 
 export default AuthorizedRoutes;

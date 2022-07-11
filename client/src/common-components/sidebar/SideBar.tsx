@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { Drawer, List, ListItemButton, ListItemText, styled } from '@mui/material';
 import { drawerWidth } from '../layout/MainLayout';
+import { DataTableConfig } from '../../utilities/constants';
 
 interface ISideBar {
   isOpen: boolean;
+  onClick: (name: string) => void;
 }
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -18,7 +18,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const SideBar = (props: ISideBar) => {
-  const { isOpen } = props;
+  const { isOpen, onClick } = props;
+  const [selectedItem, setSelectedItem] = useState(0);
+
+  const handleChangeItem = (index: number, name: string) => {
+    setSelectedItem(index);
+    onClick(name);
+  };
 
   return (
     <Drawer
@@ -37,13 +43,16 @@ const SideBar = (props: ISideBar) => {
     >
       <DrawerHeader />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
+        {Object.keys(DataTableConfig).map((text, index) => (
+          <ListItemButton
+            onClick={(e) => {
+              handleChangeItem(index, DataTableConfig[text].value);
+            }}
+            key={index}
+            selected={index === selectedItem}
+          >
+            <ListItemText primary={DataTableConfig[text].title} />
+          </ListItemButton>
         ))}
       </List>
     </Drawer>

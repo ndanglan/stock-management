@@ -1,22 +1,16 @@
 import React, { useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import LoginPage from 'pages/non-auth/Login';
 interface INonAuthorizedRoutes {
   isAuthenticated: boolean;
+  children: any;
 }
 const NonAuthorizedRoutes = (props: INonAuthorizedRoutes) => {
-  const navigate = useNavigate();
+  if (props.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
-  useEffect(() => {
-    if (props.isAuthenticated) {
-      navigate('/');
-    }
-  }, [props.isAuthenticated]);
-  return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
-  );
+  return <>{props.children}</>;
 };
 
 export default NonAuthorizedRoutes;
