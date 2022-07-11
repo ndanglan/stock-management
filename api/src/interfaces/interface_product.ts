@@ -12,4 +12,6 @@ export interface IProduct {
   amount?: number;
   type?: string;
   status?: ProductStatus;
+  createdAt?: Date;
+  page?: number;
 }

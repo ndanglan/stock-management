@@ -1,29 +1,23 @@
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import ProductServices from '../services/products';
-import { serialize } from '../../utils/functions';
+import { formatPayload } from '../../utils/functions';
 import { IProductRequest } from '../../interfaces/interface_product';
 
 class ProductController {
   static async getProducts(req: IProductRequest, res: Response) {
-    const { status } = req.body;
+    const { status, page } = req.body;
 
-    const products: any = await ProductServices.getProducts(status);
+    const products: any = await ProductServices.getProducts(status, page);
 
     if (products && !products?.statusCode) {
-      products.status = true;
-      const serializeProducts = serialize(products);
-      res.status(StatusCodes.OK).json(JSON.parse(serializeProducts));
+      res.status(StatusCodes.OK).json(formatPayload(true, products));
     } else if (products?.statusCode === StatusCodes.CONFLICT) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: false,
-        message: products.message,
-      });
+      res.status(StatusCodes.CONFLICT).json(formatPayload(false, undefined, products.message));
     } else {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: false,
-        message: 'Opps something went wrong',
-      });
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(formatPayload(false, undefined, products?.message || 'Opps something went wrong'));
     }
   }
 
@@ -32,70 +26,69 @@ class ProductController {
     const product: any = await ProductServices.getSingleProduct(productId);
 
     if (product && !product?.statusCode) {
-      product.status = true;
-      const serializeProducts = serialize(product);
-      res.status(StatusCodes.OK).json(JSON.parse(serializeProducts));
+      res.status(StatusCodes.OK).json(formatPayload(true, product));
     } else if (product?.statusCode === StatusCodes.BAD_REQUEST) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: false,
-        message: product.message,
-      });
+      res.status(StatusCodes.BAD_REQUEST).json(formatPayload(false, undefined, product?.message));
     } else {
-      res.status(StatusCodes.OK).json({
-        status: true,
-        message: 'No product founded',
-      });
+      res.status(StatusCodes.OK).json(formatPayload(true, undefined, 'No product founded'));
     }
   }
 
   static async createProduct(req: IProductRequest, res: Response) {
-    const { authorId, code, amount, type } = req.body;
+    const { authorId, code, amount, type, createdAt, status } = req.body;
 
     const response: any = await ProductServices.createProduct({
       authorId,
       code,
       amount,
       type,
+      createdAt,
+      status,
     });
     if (response && !response?.StatusCodes) {
-      const serializeProducts = serialize(response);
-      res.status(StatusCodes.CREATED).json(JSON.parse(serializeProducts));
+      res.status(StatusCodes.CREATED).json(formatPayload(true, response));
     } else {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: false,
-        message: 'Opps something went wrong',
-      });
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(formatPayload(false, undefined, response?.message || 'Opps something went wrong'));
     }
   }
 
   static async updateProduct(req: IProductRequest, res: Response) {
     const response: any = await ProductServices.updateProduct(req.body);
     if (response && !response?.StatusCodes) {
-      const serializeProducts = serialize(response);
-      res.status(StatusCodes.OK).json(JSON.parse(serializeProducts));
+      res.status(StatusCodes.OK).json(formatPayload(true, response));
     } else {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: false,
-        message: 'Opps something went wrong',
-      });
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(formatPayload(false, undefined, response?.message || 'Opps something went wrong'));
     }
   }
 
   static async deleteProduct(req: IProductRequest, res: Response) {
     const { id } = req.body;
+
     const response: any = await ProductServices.deleteProduct(id);
-    console.log(response);
+
     if (!response?.StatusCodes) {
-      res.status(StatusCodes.OK).json({
-        status: true,
-        message: 'Delete successfully',
-      });
+      res.status(StatusCodes.OK).json(formatPayload(true, undefined, 'Delete successfully'));
     } else {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: false,
-        message: response?.message,
-      });
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(formatPayload(false, undefined, response?.message || 'Opps something went wrong'));
     }
+  }
+
+  static async getCategories(req: any, res: any) {
+    const response: any = await ProductServices.getCategories();
+    if (response && !response.StatusCodes) {
+      res.status(StatusCodes.OK).json(formatPayload(true, [...response.map((res: any) => ({ name: res.name }))]));
+      return;
+    }
+
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json(formatPayload(false, undefined, response?.message || 'Opps something went wrong'));
   }
 }
 

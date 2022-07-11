@@ -26,3 +26,7 @@ export enum ProductStatus {
 export enum ProductError {
   CODE = 'product_code_key',
 }
+
+export enum ProductDefault {
+  PRODUCT_PER_PAGE = 6,
+}

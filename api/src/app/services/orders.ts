@@ -18,10 +18,11 @@ class OrderServices {
   }
 
   static async createOrder(value: IOrder) {
-    const { products, total, amount } = value;
+    const { products, total, amount, authorId } = value;
     try {
       const res = prisma.order.create({
         data: {
+          authorId,
           products: {
             create: [
               ...products.map((prod) => ({
@@ -37,7 +38,6 @@ class OrderServices {
           amount: amount,
         },
       });
-
       return res;
     } catch (error) {
       return {
@@ -59,7 +59,6 @@ class OrderServices {
           id: Number(data),
         },
       });
-      console.log(res);
       return res;
     } catch (error) {
       if (error.meta.cause) {

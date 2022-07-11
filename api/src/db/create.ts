@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
+    const count = await prisma.user.findMany({});
+
+    console.log(count.length);
     // const product = {
     //   authorId: 1,
     //   code: 'TEST3',
@@ -40,28 +43,28 @@ async function main() {
     //     },
     //   },
     // });
-    const dOrders = {
-      total: 5,
-      amount: 50,
-      products: [2, 4, 6],
-    };
-    const orders = await prisma.order.create({
-      data: {
-        products: {
-          create: [
-            ...dOrders.products.map((prod) => ({
-              product: {
-                connect: {
-                  id: prod,
-                },
-              },
-            })),
-          ],
-        },
-        total: dOrders.total,
-        amount: dOrders.amount,
-      },
-    });
+    // const dOrders = {
+    //   total: 5,
+    //   amount: 50,
+    //   products: [2, 4, 6],
+    // };
+    // const orders = await prisma.order.create({
+    //   data: {
+    //     products: {
+    //       create: [
+    //         ...dOrders.products.map((prod) => ({
+    //           product: {
+    //             connect: {
+    //               id: prod,
+    //             },
+    //           },
+    //         })),
+    //       ],
+    //     },
+    //     total: dOrders.total,
+    //     amount: dOrders.amount,
+    //   },
+    // });
   } catch (error) {
     console.log(error);
   } finally {

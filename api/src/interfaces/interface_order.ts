@@ -5,6 +5,7 @@ export interface IOrderRequest extends Request {
 }
 
 export interface IOrder {
+  authorId?: number;
   id?: number | string;
   total?: number;
   amount?: number;

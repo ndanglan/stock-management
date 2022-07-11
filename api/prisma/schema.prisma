@@ -21,6 +21,7 @@ model user {
   username String
   password String
   products product[] @relation("products")
+  orders   order[]   @relation("orders")
 }
 
 model product {
@@ -64,4 +65,6 @@ model order {
   products OrdersOnProducts[]
   total    Float
   amount   Int
+  author   user               @relation("orders", fields: [authorId], references: [id])
+  authorId Int
 }

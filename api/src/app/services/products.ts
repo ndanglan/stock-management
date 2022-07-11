@@ -1,3 +1,4 @@
+import { ProductDefault } from './../../utils/enum_utils';
 import { StatusCodes } from 'http-status-codes';
 import { PrismaClient } from '@prisma/client';
 import { ProductError, ProductStatus } from '../../utils/enum_utils';
@@ -6,9 +7,12 @@ import { IProduct } from '../../interfaces/interface_product';
 const prisma = new PrismaClient();
 
 class ProductServices {
-  static async getProducts(status?: ProductStatus) {
+  static async getProducts(status?: ProductStatus, page?: number) {
+    const pageNeeded = page || 1;
+
+    const productToSkip = pageNeeded === 1 ? 0 : (pageNeeded - 1) * ProductDefault.PRODUCT_PER_PAGE;
     try {
-      const products = status
+      const totalProduct = status
         ? await prisma.product.findMany({
             where: {
               status,
@@ -16,13 +20,45 @@ class ProductServices {
           })
         : await prisma.product.findMany({
             where: {
+              status: ProductStatus.ACCEPT,
+            },
+          });
+      const numberOfPage = Math.ceil(totalProduct.length / ProductDefault.PRODUCT_PER_PAGE);
+      const products = status
+        ? await prisma.product.findMany({
+            skip: productToSkip,
+            take: ProductDefault.PRODUCT_PER_PAGE,
+            orderBy: [
+              {
+                createdAt: 'desc',
+              },
+              {
+                amount: 'desc',
+              },
+            ],
+            where: {
               status,
+            },
+          })
+        : await prisma.product.findMany({
+            skip: productToSkip,
+            take: ProductDefault.PRODUCT_PER_PAGE,
+            orderBy: [
+              {
+                createdAt: 'desc',
+              },
+              {
+                amount: 'desc',
+              },
+            ],
+            where: {
+              status: ProductStatus.ACCEPT,
             },
           });
       if (products) {
-        return products;
+        return { products: products, numberOfPage } as any;
       }
-      return [];
+      return { products: [], numberOfPage: 0 } as any;
     } catch (error) {
       return {
         statusCode: StatusCodes.BAD_REQUEST,
@@ -55,7 +91,7 @@ class ProductServices {
         },
       });
       const isExisting = categories.length > 0;
-      const { authorId, code, amount, type } = value;
+      const { authorId, code, amount, type, createdAt, status } = value;
 
       const res = await prisma.product.create({
         data: {
@@ -63,6 +99,8 @@ class ProductServices {
           code,
           amount,
           type,
+          createdAt,
+          status: status || ProductStatus.ACCEPT,
           categories: {
             create: [
               {
@@ -99,6 +137,7 @@ class ProductServices {
       };
     }
   }
+
   static async updateProduct(data: IProduct) {
     const { id, ...others } = data;
     try {
@@ -124,9 +163,15 @@ class ProductServices {
       };
     }
   }
+
   static async deleteProduct(data: IProduct['id']) {
     try {
       await prisma.categoriesOnProducts.deleteMany({
+        where: {
+          productId: Number(data),
+        },
+      });
+      await prisma.ordersOnProducts.deleteMany({
         where: {
           productId: Number(data),
         },
@@ -136,7 +181,6 @@ class ProductServices {
           id: Number(data),
         },
       });
-      console.log(res);
       return res;
     } catch (error) {
       if (error.meta.cause) {
@@ -145,6 +189,18 @@ class ProductServices {
           message: 'Record to delete does not exist.',
         };
       }
+      return {
+        StatusCodes: StatusCodes.BAD_REQUEST,
+        message: 'Oops, something went wrong',
+      };
+    }
+  }
+
+  static async getCategories() {
+    try {
+      const res = await prisma.category.findMany({});
+      return res;
+    } catch (error) {
       return {
         StatusCodes: StatusCodes.BAD_REQUEST,
         message: 'Oops, something went wrong',

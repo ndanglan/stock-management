@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Stock management api</h1>');
 });
 
-app.use(`${baseUri}/auth`, authMiddleware, authRouter);
+app.use(`${baseUri}/auth`, authRouter);
 app.use(`${baseUri}/products`, authMiddleware, productRouter);
 app.use(`${baseUri}/orders`, authMiddleware, orderRouter);
 
