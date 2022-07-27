@@ -84,4 +84,17 @@ const updateProduct = async (payload: any) => {
     });
 };
 
-export { getProducts, createProducts, getSingleProduct, deleteProduct, updateProduct };
+const getCategories = async () => {
+  return await API.get('/products/categories')
+    .then((response) => {
+      return { data: response, status: response.status };
+    })
+    .catch((error) => {
+      return {
+        status: error.status,
+        data: error.response,
+      };
+    });
+};
+
+export { getProducts, createProducts, getSingleProduct, deleteProduct, updateProduct, getCategories };

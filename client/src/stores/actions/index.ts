@@ -7,6 +7,11 @@ import {
   getSingleProduct as getSingleProductAction,
   deleteProduct as deleteProductAction,
 } from './productActions';
+import {
+  getOrders as getOrdersAction,
+  createOrder as createOrderAction,
+  deleteOrder as deleteOrderAction,
+} from './orderActions';
 export {
   screenResize,
   authAction,
@@ -15,4 +20,7 @@ export {
   updateProductActions,
   getSingleProductAction,
   deleteProductAction,
+  getOrdersAction,
+  createOrderAction,
+  deleteOrderAction,
 };

@@ -10,9 +10,19 @@ import {
 import { ActionTypes } from '../constants';
 import { handleData } from './handleFunction';
 
-function* handleFetchProduct(value?: any) {
+export function* handleFetchProduct(value?: any) {
   try {
     const { data } = yield call(getProducts, value ? value?.payload : {});
+    if (value?.payload?.status) {
+      yield put({
+        type: ActionTypes.PRODUCT_REJECT_FETCH_DONE,
+        payload: {
+          ...data,
+        },
+      });
+
+      return;
+    }
     yield put({
       type: ActionTypes.PRODUCT_DONE,
       payload: {
@@ -97,9 +107,7 @@ function* handleUpdateProduct(value: any) {
 
 function* handleDeleteProduct(value: any) {
   try {
-    console.log(value);
     const { data } = yield call(deleteProduct, value.payload);
-    console.log(data);
     if (data?.status !== StatusCodes.BAD_REQUEST) {
       yield put({
         type: ActionTypes.PRODUCT_DELETE_DONE,
@@ -161,6 +169,10 @@ function* watchFetchProductDone() {
   yield takeLatest(ActionTypes.PRODUCT_DONE, handleData);
 }
 
+function* watchFetchProductRejectDone() {
+  yield takeLatest(ActionTypes.PRODUCT_REJECT_FETCH_DONE, handleData);
+}
+
 function* watchCreateProductsFlow() {
   yield takeLatest(ActionTypes.PRODUCT_CREATE_REQUESTING, handleCreateProduct);
 }
@@ -203,5 +215,6 @@ export function* productSaga() {
     watchUpdateProductDone(),
     watchFetchSingleProductsDone(),
     watchDeleteProductsDone(),
+    watchFetchProductRejectDone(),
   ]);
 }

@@ -55,8 +55,23 @@ class ProductServices {
               status: ProductStatus.ACCEPT,
             },
           });
-      if (products) {
-        return { products: products, numberOfPage } as any;
+
+      if (products.length > 0) {
+        let newCate: any[] = [];
+
+        for (const product of products) {
+          const cate = await prisma.categoriesOnProducts.findMany({
+            where: {
+              productId: product.id,
+            },
+          });
+
+          newCate.push({
+            ...product,
+            type: cate.map((cat) => cat.categoryId),
+          });
+        }
+        return { products: newCate, numberOfPage } as any;
       }
       return { products: [], numberOfPage: 0 } as any;
     } catch (error) {
@@ -69,12 +84,20 @@ class ProductServices {
 
   static async getSingleProduct(productId: string) {
     try {
+      const categories = await prisma.categoriesOnProducts.findMany({
+        where: {
+          productId: Number(productId),
+        },
+      });
       const product = await prisma.product.findUnique({
         where: {
           id: Number(productId),
         },
       });
-      return product;
+      return {
+        ...product,
+        type: categories.map((cat) => cat.categoryId),
+      };
     } catch (error) {
       return {
         statusCode: StatusCodes.BAD_REQUEST,
@@ -85,38 +108,46 @@ class ProductServices {
 
   static async createProduct(value: IProduct) {
     try {
-      const categories = await prisma.category.findMany({
+      const { authorId, code, amount, type, createdAt, status } = value;
+
+      // find product existing
+      const existedProduct = await prisma.product.findUnique({
         where: {
-          name: value.type,
+          code: code,
         },
       });
-      const isExisting = categories.length > 0;
-      const { authorId, code, amount, type, createdAt, status } = value;
+
+      if (existedProduct) {
+        const res = await prisma.product.update({
+          where: {
+            code: code,
+          },
+          data: {
+            amount: existedProduct.amount + amount,
+            createdAt,
+          },
+        });
+
+        return res;
+      }
+
+      const n = type.map((t) => ({
+        category: {
+          connect: {
+            id: t.id,
+          },
+        },
+      }));
 
       const res = await prisma.product.create({
         data: {
           authorId,
           code,
           amount,
-          type,
           createdAt,
           status: status || ProductStatus.ACCEPT,
           categories: {
-            create: [
-              {
-                category: isExisting
-                  ? {
-                      connect: {
-                        name: value.type,
-                      },
-                    }
-                  : {
-                      create: {
-                        name: value.type,
-                      },
-                    },
-              },
-            ],
+            create: [...n],
           },
         },
       });
@@ -139,14 +170,32 @@ class ProductServices {
   }
 
   static async updateProduct(data: IProduct) {
-    const { id, ...others } = data;
+    const { id, type, amount, status, createdAt, code } = data;
     try {
+      if (type?.length > 0) {
+        await prisma.categoriesOnProducts.deleteMany({
+          where: {
+            productId: Number(id),
+          },
+        });
+        for (const t of type) {
+          await prisma.categoriesOnProducts.createMany({
+            data: {
+              productId: Number(id),
+              categoryId: Number(t.id),
+            },
+          });
+        }
+      }
       const res = await prisma.product.update({
         where: {
           id: Number(id),
         },
         data: {
-          ...others,
+          amount: Number(amount),
+          status,
+          createdAt,
+          code,
         },
       });
       return res;

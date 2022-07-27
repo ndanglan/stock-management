@@ -82,7 +82,7 @@ class ProductController {
   static async getCategories(req: any, res: any) {
     const response: any = await ProductServices.getCategories();
     if (response && !response.StatusCodes) {
-      res.status(StatusCodes.OK).json(formatPayload(true, [...response.map((res: any) => ({ name: res.name }))]));
+      res.status(StatusCodes.OK).json(formatPayload(true, response));
       return;
     }
 

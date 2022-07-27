@@ -10,7 +10,7 @@ export interface IProduct {
   authorId?: number;
   code?: string;
   amount?: number;
-  type?: string;
+  type?: any[];
   status?: ProductStatus;
   createdAt?: Date;
   page?: number;

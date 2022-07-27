@@ -6,6 +6,6 @@ export interface IProduct {
   code: string;
   amount: number;
   status?: ProductStatus;
-  type: string;
+  type: any[];
   createdAt?: string;
 }

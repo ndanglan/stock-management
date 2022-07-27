@@ -7,7 +7,8 @@ export interface IOrderRequest extends Request {
 export interface IOrder {
   authorId?: number;
   id?: number | string;
-  total?: number;
   amount?: number;
-  products: number[] | string[];
+  products: { id: number | string; amount: number }[];
+  orderCode?: string;
+  page?: number;
 }

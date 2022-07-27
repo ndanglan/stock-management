@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `order` ADD COLUMN `status` ENUM('EXPORTED') NOT NULL DEFAULT 'EXPORTED';

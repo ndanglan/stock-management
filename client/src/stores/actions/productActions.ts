@@ -39,3 +39,9 @@ export const deleteProduct = (payload?: any, callback?: any) => {
     callback,
   };
 };
+
+export const getCategories = () => {
+  return {
+    type: ActionTypes.FETCH_CATEGORY,
+  };
+};

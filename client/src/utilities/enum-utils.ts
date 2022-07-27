@@ -6,6 +6,8 @@ export enum AuthMode {
 export enum ActionButtons {
   EDIT = 'EDIT',
   DELETE = 'DELETE',
+  ORDER = 'ORDER',
+  DETAIL = 'DETAIL',
 }
 
 export enum ViewMode {

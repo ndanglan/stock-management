@@ -17,8 +17,10 @@ export const DataTableConfig: any = {
     title: 'Đơn hàng đã xuất',
     value: 'orders',
     titleCell: [
+      { name: 'Mã đơn hàng', props: 'orderCode' },
       { name: 'Tổng số sản phẩm', props: 'amount' },
-      { name: 'Tổng tiền', props: 'total' },
+      { name: 'Người xuất', props: 'author' },
+      { name: 'Trạng thái', props: 'status' },
       { name: 'Thời gian xuất', props: 'createdAt' },
     ],
   },
